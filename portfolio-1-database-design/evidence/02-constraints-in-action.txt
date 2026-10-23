@@ -1,0 +1,21 @@
+# Portfolio 1 evidence: constraints rejecting invalid data
+# Each test below SHOULD fail — that proves the rule is enforced.
+# Generated: 2026-10-22 13:11 UTC
+
+===== TEST 1: duplicate username (UNIQUE) — expected to FAIL =====
+ERROR:  duplicate key value violates unique constraint "players_username_key"
+DETAIL:  Key (username)=(shadowfox) already exists.
+
+===== TEST 2: negative points (CHECK points>=0) — expected to FAIL =====
+ERROR:  new row for relation "scores" violates check constraint "chk_points_nonneg"
+DETAIL:  Failing row contains (7, 1, -10, 2026-10-22 14:11:43.169122+01).
+
+===== TEST 3: score for a non-existent session (FOREIGN KEY) — expected to FAIL =====
+ERROR:  insert or update on table "scores" violates foreign key constraint "scores_session_id_fkey"
+DETAIL:  Key (session_id)=(9999) is not present in table "game_sessions".
+
+===== TEST 4: session ending before it started (CHECK) — expected to FAIL =====
+ERROR:  new row for relation "game_sessions" violates check constraint "chk_session_time"
+DETAIL:  Failing row contains (7, 1, 1, ios, 2026-10-22 14:11:43.257012+01, 2026-10-22 14:06:43.257012+01).
+
+>>> All four were correctly rejected by the database.

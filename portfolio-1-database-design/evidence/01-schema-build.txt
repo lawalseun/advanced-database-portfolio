@@ -1,0 +1,60 @@
+###################################################################
+# ArenaPulse — Portfolio 1 evidence: schema build + verification
+# Generated: 2026-10-22 13:11 UTC
+# PostgreSQL 16
+###################################################################
+
+========== 1. Running schema.sql (create all tables) ==========
+psql:schema.sql:11: NOTICE:  table "player_achievements" does not exist, skipping
+DROP TABLE
+psql:schema.sql:12: NOTICE:  table "achievements" does not exist, skipping
+DROP TABLE
+psql:schema.sql:13: NOTICE:  table "scores" does not exist, skipping
+DROP TABLE
+psql:schema.sql:14: NOTICE:  table "game_sessions" does not exist, skipping
+DROP TABLE
+psql:schema.sql:15: NOTICE:  table "games" does not exist, skipping
+DROP TABLE
+psql:schema.sql:16: NOTICE:  table "players" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+>>> schema.sql ran with no errors
+
+========== 2. Running seed.sql (insert sample data) ==========
+INSERT 0 5
+INSERT 0 3
+INSERT 0 6
+INSERT 0 6
+INSERT 0 4
+INSERT 0 5
+>>> seed.sql ran with no errors
+
+========== 3. Tables now in the database ==========
+                List of relations
+ Schema |        Name         | Type  |  Owner   
+--------+---------------------+-------+----------
+ public | achievements        | table | postgres
+ public | game_sessions       | table | postgres
+ public | games               | table | postgres
+ public | player_achievements | table | postgres
+ public | players             | table | postgres
+ public | scores              | table | postgres
+(6 rows)
+
+
+========== 4. Row counts per table ==========
+        table        | count 
+---------------------+-------
+ achievements        |     4
+ game_sessions       |     6
+ games               |     3
+ player_achievements |     5
+ players             |     5
+ scores              |     6
+(6 rows)
+

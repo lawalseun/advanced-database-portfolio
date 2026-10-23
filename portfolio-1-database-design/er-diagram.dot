@@ -1,0 +1,73 @@
+// ArenaPulse — Entity-Relationship Diagram (Portfolio 1)
+// Render:  dot -Tpng er-diagram.dot -o er-diagram.png
+digraph ArenaPulse {
+    rankdir=LR;
+    bgcolor="white";
+    node [shape=plaintext, fontname="Helvetica", fontsize=11];
+    edge [fontname="Helvetica", fontsize=10, color="#334155", arrowhead=none];
+
+    players [label=<
+      <table border="0" cellborder="1" cellspacing="0" cellpadding="6" bgcolor="white">
+        <tr><td bgcolor="#1e3a5f" align="center"><font color="white"><b>players</b></font></td></tr>
+        <tr><td align="left"><b>PK</b> player_id</td></tr>
+        <tr><td align="left">username (UNIQUE)</td></tr>
+        <tr><td align="left">email (UNIQUE)</td></tr>
+        <tr><td align="left">country</td></tr>
+        <tr><td align="left">created_at</td></tr>
+      </table>>];
+
+    games [label=<
+      <table border="0" cellborder="1" cellspacing="0" cellpadding="6" bgcolor="white">
+        <tr><td bgcolor="#1e3a5f" align="center"><font color="white"><b>games</b></font></td></tr>
+        <tr><td align="left"><b>PK</b> game_id</td></tr>
+        <tr><td align="left">title (UNIQUE)</td></tr>
+        <tr><td align="left">genre</td></tr>
+        <tr><td align="left">released_at</td></tr>
+      </table>>];
+
+    game_sessions [label=<
+      <table border="0" cellborder="1" cellspacing="0" cellpadding="6" bgcolor="white">
+        <tr><td bgcolor="#1e3a5f" align="center"><font color="white"><b>game_sessions</b></font></td></tr>
+        <tr><td align="left"><b>PK</b> session_id</td></tr>
+        <tr><td align="left"><b>FK</b> player_id</td></tr>
+        <tr><td align="left"><b>FK</b> game_id</td></tr>
+        <tr><td align="left">device</td></tr>
+        <tr><td align="left">started_at</td></tr>
+        <tr><td align="left">ended_at</td></tr>
+      </table>>];
+
+    scores [label=<
+      <table border="0" cellborder="1" cellspacing="0" cellpadding="6" bgcolor="white">
+        <tr><td bgcolor="#1e3a5f" align="center"><font color="white"><b>scores</b></font></td></tr>
+        <tr><td align="left"><b>PK</b> score_id</td></tr>
+        <tr><td align="left"><b>FK</b> session_id</td></tr>
+        <tr><td align="left">points</td></tr>
+        <tr><td align="left">achieved_at</td></tr>
+      </table>>];
+
+    achievements [label=<
+      <table border="0" cellborder="1" cellspacing="0" cellpadding="6" bgcolor="white">
+        <tr><td bgcolor="#1e3a5f" align="center"><font color="white"><b>achievements</b></font></td></tr>
+        <tr><td align="left"><b>PK</b> achievement_id</td></tr>
+        <tr><td align="left"><b>FK</b> game_id</td></tr>
+        <tr><td align="left">name</td></tr>
+        <tr><td align="left">description</td></tr>
+        <tr><td align="left">points_reward</td></tr>
+      </table>>];
+
+    player_achievements [label=<
+      <table border="0" cellborder="1" cellspacing="0" cellpadding="6" bgcolor="white">
+        <tr><td bgcolor="#7c2d12" align="center"><font color="white"><b>player_achievements</b></font></td></tr>
+        <tr><td align="left"><b>PK/FK</b> player_id</td></tr>
+        <tr><td align="left"><b>PK/FK</b> achievement_id</td></tr>
+        <tr><td align="left">unlocked_at</td></tr>
+      </table>>];
+
+    // Relationships (1 ---- N). "1" sits next to the parent, "N" (crow's foot) next to the child.
+    players       -> game_sessions       [taillabel="1", headlabel="N", label="plays"];
+    games         -> game_sessions       [taillabel="1", headlabel="N", label="hosts"];
+    game_sessions -> scores              [taillabel="1", headlabel="N", label="earns"];
+    games         -> achievements        [taillabel="1", headlabel="N", label="defines"];
+    players       -> player_achievements [taillabel="1", headlabel="N", label="unlocks"];
+    achievements  -> player_achievements [taillabel="1", headlabel="N", label="unlocked by"];
+}
