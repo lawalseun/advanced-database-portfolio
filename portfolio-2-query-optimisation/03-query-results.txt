@@ -1,0 +1,51 @@
+# Portfolio 2 evidence: query results (the 5 business queries)
+# Generated: 2026-10-23 09:01 UTC
+
+===== Q1: Top 10 leaderboard for game 2 =====
+  username   | best_score 
+-------------+------------
+ player_1157 |       2000
+ player_3494 |       2000
+ player_4443 |       1999
+ player_52   |       1999
+ player_4780 |       1999
+ player_19   |       1999
+ player_4714 |       1999
+ player_4410 |       1999
+ player_1947 |       1999
+ player_2969 |       1999
+(10 rows)
+
+
+===== Q2: Player 42's history (first 10 rows) =====
+    title     |          started_at           | points 
+--------------+-------------------------------+--------
+ Nitro Rush   | 2026-10-18 21:12:12.363904+01 |   1756
+ Nitro Rush   | 2026-10-18 21:12:12.363904+01 |    351
+ Nitro Rush   | 2026-10-18 21:12:12.363904+01 |    857
+ Puzzle Peak  | 2026-10-18 21:12:12.363904+01 |   1848
+ Nitro Rush   | 2026-10-18 21:12:12.363904+01 |    847
+ Trivia Blitz | 2026-10-18 21:12:12.363904+01 |    416
+ Puzzle Peak  | 2026-10-18 21:12:12.363904+01 |   1553
+ Puzzle Peak  | 2026-10-18 21:12:12.363904+01 |    848
+ Nitro Rush   | 2026-10-18 21:12:12.363904+01 |    522
+ Puzzle Peak  | 2026-10-18 21:12:12.363904+01 |    517
+(10 rows)
+
+
+===== Q4: queen_bee's achievements =====
+ username  | achievement | points_reward |          unlocked_at          
+-----------+-------------+---------------+-------------------------------
+ queen_bee | First Win   |            50 | 2026-10-23 09:59:09.260369+01
+ queen_bee | Hot Streak  |           120 | 2026-10-23 09:59:09.260369+01
+(2 rows)
+
+
+===== Q5: activity & average score per game =====
+    title     | sessions | avg_points | top_score 
+--------------+----------+------------+-----------
+ Nitro Rush   |    29877 |      998.4 |      2000
+ Trivia Blitz |    15144 |     1002.3 |      2000
+ Puzzle Peak  |    15045 |      999.1 |      2000
+(3 rows)
+

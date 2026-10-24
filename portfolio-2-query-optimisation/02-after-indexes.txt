@@ -1,0 +1,130 @@
+####################################################################
+# Portfolio 2 evidence: EXECUTION PLANS *AFTER* ADDING INDEXES
+# Generated: 2026-10-23 09:00 UTC — PostgreSQL 16
+# Same dataset and same queries as the 'before' file.
+####################################################################
+
+=== Q1 — Top 10 leaderboard for game 2 ===
+                                                                               QUERY PLAN                                                                               
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=3398.51..3398.54 rows=10 width=15) (actual time=59.079..59.087 rows=10 loops=1)
+   Buffers: shared hit=1062 read=27
+   ->  Sort  (cost=3398.51..3411.02 rows=5005 width=15) (actual time=59.076..59.083 rows=10 loops=1)
+         Sort Key: (max(sc.points)) DESC
+         Sort Method: top-N heapsort  Memory: 25kB
+         Buffers: shared hit=1062 read=27
+         ->  HashAggregate  (cost=3240.31..3290.36 rows=5005 width=15) (actual time=57.531..58.286 rows=5003 loops=1)
+               Group Key: p.username
+               Batches: 1  Memory Usage: 721kB
+               Buffers: shared hit=1059 read=27
+               ->  Hash Join  (cost=1812.33..3091.08 rows=29845 width=15) (actual time=14.768..47.585 rows=29877 loops=1)
+                     Hash Cond: (gs.player_id = p.player_id)
+                     Buffers: shared hit=1059 read=27
+                     ->  Hash Join  (cost=1647.71..2848.06 rows=29845 width=12) (actual time=12.969..36.744 rows=29877 loops=1)
+                           Hash Cond: (sc.session_id = gs.session_id)
+                           Buffers: shared hit=1007 read=27
+                           ->  Seq Scan on scores sc  (cost=0.00..1042.66 rows=60066 width=12) (actual time=0.006..5.352 rows=60066 loops=1)
+                                 Buffers: shared hit=442
+                           ->  Hash  (cost=1274.65..1274.65 rows=29845 width=16) (actual time=12.810..12.812 rows=29877 loops=1)
+                                 Buckets: 32768  Batches: 1  Memory Usage: 1657kB
+                                 Buffers: shared hit=565 read=27
+                                 ->  Bitmap Heap Scan on game_sessions gs  (cost=339.59..1274.65 rows=29845 width=16) (actual time=0.999..6.855 rows=29877 loops=1)
+                                       Recheck Cond: (game_id = 2)
+                                       Heap Blocks: exact=562
+                                       Buffers: shared hit=565 read=27
+                                       ->  Bitmap Index Scan on idx_sessions_game  (cost=0.00..332.13 rows=29845 width=0) (actual time=0.915..0.916 rows=29877 loops=1)
+                                             Index Cond: (game_id = 2)
+                                             Buffers: shared hit=3 read=27
+                     ->  Hash  (cost=102.05..102.05 rows=5005 width=19) (actual time=1.756..1.757 rows=5005 loops=1)
+                           Buckets: 8192  Batches: 1  Memory Usage: 338kB
+                           Buffers: shared hit=52
+                           ->  Seq Scan on players p  (cost=0.00..102.05 rows=5005 width=19) (actual time=0.006..0.640 rows=5005 loops=1)
+                                 Buffers: shared hit=52
+ Planning:
+   Buffers: shared hit=336 read=10
+ Planning Time: 1.201 ms
+ Execution Time: 59.531 ms
+(37 rows)
+
+
+=== Q2 — One player's full history (player_id=42) ===
+                                                                        QUERY PLAN                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=110.01..110.04 rows=12 width=24) (actual time=0.160..0.162 rows=12 loops=1)
+   Sort Key: gs.started_at DESC
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=45 read=1
+   ->  Nested Loop  (cost=0.58..109.80 rows=12 width=24) (actual time=0.068..0.131 rows=12 loops=1)
+         Join Filter: (gs.game_id = g.game_id)
+         Rows Removed by Join Filter: 14
+         Buffers: shared hit=42 read=1
+         ->  Nested Loop Left Join  (cost=0.58..108.31 rows=12 width=20) (actual time=0.055..0.110 rows=12 loops=1)
+               Buffers: shared hit=41 read=1
+               ->  Index Scan using idx_sessions_player on game_sessions gs  (cost=0.29..8.50 rows=12 width=24) (actual time=0.022..0.024 rows=12 loops=1)
+                     Index Cond: (player_id = 42)
+                     Buffers: shared hit=6
+               ->  Index Scan using idx_scores_session on scores sc  (cost=0.29..8.31 rows=1 width=12) (actual time=0.006..0.006 rows=1 loops=12)
+                     Index Cond: (session_id = gs.session_id)
+                     Buffers: shared hit=35 read=1
+         ->  Materialize  (cost=0.00..1.04 rows=3 width=20) (actual time=0.001..0.001 rows=2 loops=12)
+               Buffers: shared hit=1
+               ->  Seq Scan on games g  (cost=0.00..1.03 rows=3 width=20) (actual time=0.004..0.004 rows=3 loops=1)
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=330
+ Planning Time: 0.883 ms
+ Execution Time: 0.242 ms
+(24 rows)
+
+
+=== Q3 — This week's leaders for game 2 ===
+                                                                            QUERY PLAN                                                                            
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=4186.52..4186.54 rows=10 width=23) (actual time=50.997..51.013 rows=10 loops=1)
+   Buffers: shared hit=1089
+   ->  Sort  (cost=4186.52..4261.13 rows=29845 width=23) (actual time=50.995..51.008 rows=10 loops=1)
+         Sort Key: sc.points DESC
+         Sort Method: top-N heapsort  Memory: 26kB
+         Buffers: shared hit=1089
+         ->  Hash Join  (cost=1812.33..3541.58 rows=29845 width=23) (actual time=13.441..45.616 rows=29877 loops=1)
+               Hash Cond: (gs.player_id = p.player_id)
+               Buffers: shared hit=1086
+               ->  Hash Join  (cost=1647.71..3298.55 rows=29845 width=20) (actual time=11.793..37.328 rows=29877 loops=1)
+                     Hash Cond: (sc.session_id = gs.session_id)
+                     Buffers: shared hit=1034
+                     ->  Seq Scan on scores sc  (cost=0.00..1493.16 rows=60066 width=20) (actual time=0.006..13.318 rows=60066 loops=1)
+                           Filter: (achieved_at >= (now() - '7 days'::interval))
+                           Buffers: shared hit=442
+                     ->  Hash  (cost=1274.65..1274.65 rows=29845 width=16) (actual time=11.652..11.654 rows=29877 loops=1)
+                           Buckets: 32768  Batches: 1  Memory Usage: 1657kB
+                           Buffers: shared hit=592
+                           ->  Bitmap Heap Scan on game_sessions gs  (cost=339.59..1274.65 rows=29845 width=16) (actual time=0.844..6.213 rows=29877 loops=1)
+                                 Recheck Cond: (game_id = 2)
+                                 Heap Blocks: exact=562
+                                 Buffers: shared hit=592
+                                 ->  Bitmap Index Scan on idx_sessions_game  (cost=0.00..332.13 rows=29845 width=0) (actual time=0.764..0.765 rows=29877 loops=1)
+                                       Index Cond: (game_id = 2)
+                                       Buffers: shared hit=30
+               ->  Hash  (cost=102.05..102.05 rows=5005 width=19) (actual time=1.547..1.556 rows=5005 loops=1)
+                     Buckets: 8192  Batches: 1  Memory Usage: 338kB
+                     Buffers: shared hit=52
+                     ->  Seq Scan on players p  (cost=0.00..102.05 rows=5005 width=19) (actual time=0.005..0.604 rows=5005 loops=1)
+                           Buffers: shared hit=52
+ Planning:
+   Buffers: shared hit=366 read=2
+ Planning Time: 1.040 ms
+ Execution Time: 51.157 ms
+(34 rows)
+
+
+=== Indexes now on these tables ===
+   tablename   |         indexname          
+---------------+----------------------------
+ game_sessions | game_sessions_pkey
+ game_sessions | idx_sessions_game
+ game_sessions | idx_sessions_player
+ scores        | idx_scores_achieved_points
+ scores        | idx_scores_session
+ scores        | scores_pkey
+(6 rows)
+

@@ -29,4 +29,14 @@ reflection in my own words.
   rejected (`evidence/02-constraints-in-action.txt`); I reviewed the normalisation
   write-up and answered comprehension questions on 1NF–3NF.
 
+### Session 2 — 2026-10-23 (Portfolio 2: Query Processing & Optimisation)
+- **What AI helped with:** generating a larger test dataset; writing the five
+  leaderboard queries; capturing execution plans; choosing and writing the
+  indexes; and drafting the performance analysis.
+- **How I checked it:** I ran every query on PostgreSQL 16 and confirmed the
+  results made sense; I compared the real `EXPLAIN ANALYZE` plans before and after
+  indexing (evidence files `01`, `02`, `03`); I verified the ~43× speed-up on the
+  player-history query by timing 5 runs with and without the index; and I made
+  sure I could explain *why* the all-time top-10 query did not speed up.
+
 <!-- Add a new dated entry here after each session. -->

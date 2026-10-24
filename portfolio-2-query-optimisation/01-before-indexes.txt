@@ -1,0 +1,123 @@
+####################################################################
+# Portfolio 2 evidence: EXECUTION PLANS *BEFORE* ADDING INDEXES
+# Generated: 2026-10-23 09:00 UTC — PostgreSQL 16
+# Dataset: 5,005 players / 60,066 sessions / 60,066 scores
+# Only primary-key and UNIQUE indexes exist at this point.
+####################################################################
+
+========================================================
+Q1 — Top 10 leaderboard for game 2 (GROUP BY + ORDER BY)
+========================================================
+                                                                        QUERY PLAN                                                                        
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=3435.92..3435.95 rows=10 width=15) (actual time=41.397..41.404 rows=10 loops=1)
+   Buffers: shared hit=1059
+   ->  Sort  (cost=3435.92..3448.43 rows=5005 width=15) (actual time=41.395..41.400 rows=10 loops=1)
+         Sort Key: (max(sc.points)) DESC
+         Sort Method: top-N heapsort  Memory: 25kB
+         Buffers: shared hit=1059
+         ->  HashAggregate  (cost=3277.71..3327.76 rows=5005 width=15) (actual time=40.057..40.526 rows=5003 loops=1)
+               Group Key: p.username
+               Batches: 1  Memory Usage: 721kB
+               Buffers: shared hit=1056
+               ->  Hash Join  (cost=1850.03..3128.68 rows=29807 width=15) (actual time=9.533..33.384 rows=29877 loops=1)
+                     Hash Cond: (gs.player_id = p.player_id)
+                     Buffers: shared hit=1056
+                     ->  Hash Join  (cost=1685.41..2885.76 rows=29807 width=12) (actual time=8.394..25.591 rows=29877 loops=1)
+                           Hash Cond: (sc.session_id = gs.session_id)
+                           Buffers: shared hit=1004
+                           ->  Seq Scan on scores sc  (cost=0.00..1042.66 rows=60066 width=12) (actual time=0.003..4.248 rows=60066 loops=1)
+                                 Buffers: shared hit=442
+                           ->  Hash  (cost=1312.83..1312.83 rows=29807 width=16) (actual time=8.267..8.268 rows=29877 loops=1)
+                                 Buckets: 32768  Batches: 1  Memory Usage: 1657kB
+                                 Buffers: shared hit=562
+                                 ->  Seq Scan on game_sessions gs  (cost=0.00..1312.83 rows=29807 width=16) (actual time=0.004..4.723 rows=29877 loops=1)
+                                       Filter: (game_id = 2)
+                                       Rows Removed by Filter: 30189
+                                       Buffers: shared hit=562
+                     ->  Hash  (cost=102.05..102.05 rows=5005 width=19) (actual time=1.105..1.106 rows=5005 loops=1)
+                           Buckets: 8192  Batches: 1  Memory Usage: 338kB
+                           Buffers: shared hit=52
+                           ->  Seq Scan on players p  (cost=0.00..102.05 rows=5005 width=19) (actual time=0.005..0.415 rows=5005 loops=1)
+                                 Buffers: shared hit=52
+ Planning:
+   Buffers: shared hit=272
+ Planning Time: 0.701 ms
+ Execution Time: 41.686 ms
+(34 rows)
+
+
+========================================================
+Q2 — One player's full history (filter on player_id=42)
+========================================================
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=2514.68..2514.71 rows=12 width=24) (actual time=10.109..10.116 rows=12 loops=1)
+   Sort Key: gs.started_at DESC
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=1008
+   ->  Hash Join  (cost=1314.04..2514.46 rows=12 width=24) (actual time=2.898..10.082 rows=12 loops=1)
+         Hash Cond: (gs.game_id = g.game_id)
+         Buffers: shared hit=1005
+         ->  Hash Right Join  (cost=1312.98..2513.32 rows=12 width=20) (actual time=2.866..10.044 rows=12 loops=1)
+               Hash Cond: (sc.session_id = gs.session_id)
+               Buffers: shared hit=1004
+               ->  Seq Scan on scores sc  (cost=0.00..1042.66 rows=60066 width=12) (actual time=0.011..3.446 rows=60066 loops=1)
+                     Buffers: shared hit=442
+               ->  Hash  (cost=1312.83..1312.83 rows=12 width=24) (actual time=2.687..2.689 rows=12 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=562
+                     ->  Seq Scan on game_sessions gs  (cost=0.00..1312.83 rows=12 width=24) (actual time=0.034..2.683 rows=12 loops=1)
+                           Filter: (player_id = 42)
+                           Rows Removed by Filter: 60054
+                           Buffers: shared hit=562
+         ->  Hash  (cost=1.03..1.03 rows=3 width=20) (actual time=0.018..0.019 rows=3 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on games g  (cost=0.00..1.03 rows=3 width=20) (actual time=0.005..0.007 rows=3 loops=1)
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=261
+ Planning Time: 0.661 ms
+ Execution Time: 10.210 ms
+(28 rows)
+
+
+========================================================
+Q3 — This week's leaders for game 2 (game_id + date range)
+========================================================
+                                                                     QUERY PLAN                                                                     
+----------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=4223.20..4223.23 rows=10 width=23) (actual time=46.582..46.588 rows=10 loops=1)
+   Buffers: shared hit=1059
+   ->  Sort  (cost=4223.20..4297.71 rows=29804 width=23) (actual time=46.577..46.581 rows=10 loops=1)
+         Sort Key: sc.points DESC
+         Sort Method: top-N heapsort  Memory: 26kB
+         Buffers: shared hit=1059
+         ->  Hash Join  (cost=1850.03..3579.15 rows=29804 width=23) (actual time=11.497..42.106 rows=29877 loops=1)
+               Hash Cond: (gs.player_id = p.player_id)
+               Buffers: shared hit=1056
+               ->  Hash Join  (cost=1685.41..3336.24 rows=29804 width=20) (actual time=10.112..34.753 rows=29877 loops=1)
+                     Hash Cond: (sc.session_id = gs.session_id)
+                     Buffers: shared hit=1004
+                     ->  Seq Scan on scores sc  (cost=0.00..1493.16 rows=60060 width=20) (actual time=0.010..12.993 rows=60066 loops=1)
+                           Filter: (achieved_at >= (now() - '7 days'::interval))
+                           Buffers: shared hit=442
+                     ->  Hash  (cost=1312.83..1312.83 rows=29807 width=16) (actual time=9.954..9.955 rows=29877 loops=1)
+                           Buckets: 32768  Batches: 1  Memory Usage: 1657kB
+                           Buffers: shared hit=562
+                           ->  Seq Scan on game_sessions gs  (cost=0.00..1312.83 rows=29807 width=16) (actual time=0.005..5.456 rows=29877 loops=1)
+                                 Filter: (game_id = 2)
+                                 Rows Removed by Filter: 30189
+                                 Buffers: shared hit=562
+               ->  Hash  (cost=102.05..102.05 rows=5005 width=19) (actual time=1.358..1.359 rows=5005 loops=1)
+                     Buckets: 8192  Batches: 1  Memory Usage: 338kB
+                     Buffers: shared hit=52
+                     ->  Seq Scan on players p  (cost=0.00..102.05 rows=5005 width=19) (actual time=0.005..0.399 rows=5005 loops=1)
+                           Buffers: shared hit=52
+ Planning:
+   Buffers: shared hit=278
+ Planning Time: 0.679 ms
+ Execution Time: 46.737 ms
+(31 rows)
+

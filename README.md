@@ -12,7 +12,7 @@ scales the database behind it.
 | Folder | Portfolio activity | Status |
 |--------|--------------------|--------|
 | `portfolio-1-database-design/` | Database design & modelling | ✅ Done |
-| `portfolio-2-query-optimisation/` | Query processing & optimisation | ⬜ |
+| `portfolio-2-query-optimisation/` | Query processing & optimisation | ✅ Done |
 | `portfolio-3-transactions-concurrency/` | Transactions & concurrency | ⬜ |
 | `portfolio-4-nosql/` | NoSQL & advanced data models (Redis) | ⬜ |
 | `portfolio-5-distributed-cloud/` | Distributed & cloud database | ⬜ |
