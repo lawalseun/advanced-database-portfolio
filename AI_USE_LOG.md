@@ -39,4 +39,16 @@ reflection in my own words.
   player-history query by timing 5 runs with and without the index; and I made
   sure I could explain *why* the all-time top-10 query did not speed up.
 
+### Session 3 — 2026-10-26 (Portfolio 3: Transactions & Concurrency)
+- **What AI helped with:** designing the `leaderboard_totals` running-total table;
+  writing the COMMIT/ROLLBACK demo; writing a Python script that runs two
+  simultaneous sessions to reproduce a lost update and three fixes; and drafting
+  the transactions/isolation explanation.
+- **How I checked it:** I ran the COMMIT/ROLLBACK script and confirmed ROLLBACK
+  undoes a change while COMMIT keeps it, and that a failed transaction discards
+  all its work (evidence 01); I ran the concurrency program and saw the lost
+  update land at 1500 instead of 2000, and all three fixes produce the correct
+  2000 (evidence 02); I made sure I can explain in my own words why the bug
+  happens under READ COMMITTED and why an atomic UPDATE avoids it.
+
 <!-- Add a new dated entry here after each session. -->

@@ -1,0 +1,37 @@
+ stage | total_points 
+-------+--------------
+ START |         1000
+(1 row)
+
+BEGIN
+UPDATE 1
+            stage             | total_points 
+------------------------------+--------------
+ inside txn (before rollback) |         1500
+(1 row)
+
+ROLLBACK
+     stage      | total_points 
+----------------+--------------
+ after ROLLBACK |         1000
+(1 row)
+
+BEGIN
+UPDATE 1
+COMMIT
+    stage     | total_points 
+--------------+--------------
+ after COMMIT |         1500
+(1 row)
+
+BEGIN
+UPDATE 1
+psql:02-commit-rollback.sql:38: ERROR:  new row for relation "leaderboard_totals" violates check constraint "chk_total_nonneg"
+DETAIL:  Failing row contains (42, 2, -5, 2026-10-26 14:41:19.279949+01).
+ROLLBACK
+      stage       | total_points 
+------------------+--------------
+ after failed txn |         1500
+(1 row)
+
+UPDATE 1

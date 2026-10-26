@@ -1,0 +1,40 @@
+ArenaPulse — Portfolio 3 concurrency demonstrations
+Two sessions each add 500 to a starting total of 1000; correct final = 2000.
+
+======================================================================
+A. THE BUG — naive read / add-in-code / write-back (READ COMMITTED)
+======================================================================
+  Session A reads total = 1000
+  Session B reads total = 1000
+  Session A writes 1000 + 500 = 1500 and COMMITs
+  Session B writes 1000 + 500 = 1500 and COMMITs
+  --> FINAL total = 1500   (correct would be 2000)
+  --> RESULT: LOST UPDATE! B overwrote A — 500 points vanished.
+
+======================================================================
+B. FIX 1 — atomic 'UPDATE ... SET total = total + 500' (two threads race)
+======================================================================
+  Both sessions ran the add concurrently; the database serialised them.
+  --> FINAL total = 2000   (correct = 2000)
+  --> RESULT: CORRECT — no points lost.
+
+======================================================================
+C. FIX 2 — 'SELECT ... FOR UPDATE' locks the row; the 2nd session waits
+======================================================================
+  Session A: got the lock after waiting 0.00s, read total = 1000
+  Session B: got the lock after waiting 0.40s, read total = 1500
+  Session A: wrote 1000 + 500 = 1500 and COMMITted (lock released)
+  Session B: wrote 1500 + 500 = 2000 and COMMITted (lock released)
+  --> FINAL total = 2000   (correct = 2000)
+  --> RESULT: CORRECT — B waited for A, so both adds counted.
+
+======================================================================
+D. ISOLATION — SERIALIZABLE detects the conflict and forces a safe retry
+======================================================================
+  Session A: attempt 1 hit a SERIALIZATION conflict -> retrying
+  Session A: committed on attempt 2 (read 1500, wrote 2000)
+  Session B: committed on attempt 1 (read 1000, wrote 1500)
+  --> FINAL total = 2000   (correct = 2000)
+  --> RESULT: CORRECT — the conflict was caught and the loser retried.
+
+Done.

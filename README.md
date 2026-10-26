@@ -13,7 +13,7 @@ scales the database behind it.
 |--------|--------------------|--------|
 | `portfolio-1-database-design/` | Database design & modelling | ✅ Done |
 | `portfolio-2-query-optimisation/` | Query processing & optimisation | ✅ Done |
-| `portfolio-3-transactions-concurrency/` | Transactions & concurrency | ⬜ |
+| `portfolio-3-transactions-concurrency/` | Transactions & concurrency | ✅ Done |
 | `portfolio-4-nosql/` | NoSQL & advanced data models (Redis) | ⬜ |
 | `portfolio-5-distributed-cloud/` | Distributed & cloud database | ⬜ |
 | `AI_USE_LOG.md` | AI-use declaration (required by the brief) | 🔄 ongoing |
