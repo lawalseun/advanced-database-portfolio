@@ -1,0 +1,19 @@
+Loading Redis leaderboard from PostgreSQL data...
+Loaded 5,003 players into Redis sorted set 'leaderboard:game:2'.
+
+==================================================================
+BENCHMARK  (game 2, 5,003 ranked players, median of 7 runs)
+==================================================================
+Operation                     PostgreSQL       Redis    Speed-up
+------------------------------------------------------------------
+Top 10 players                 65.755 ms    0.508 ms       130x
+A players rank                 83.624 ms    0.405 ms       206x
+==================================================================
+
+Top 3 from Redis (sanity check):
+  player_3499: 2000
+  player_1162: 2000
+  player_872: 1999
+
+Rank of player_2631:
+  Redis ZREVRANK -> 4804 (1-based)

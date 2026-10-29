@@ -51,4 +51,16 @@ reflection in my own words.
   2000 (evidence 02); I made sure I can explain in my own words why the bug
   happens under READ COMMITTED and why an atomic UPDATE avoids it.
 
+### Session 4 — 2026-10-29 (Portfolio 4: NoSQL & Advanced Data Models)
+- **What AI helped with:** modelling the leaderboard as a Redis sorted set (plus
+  player profiles as hashes); writing the Redis command walkthrough; writing a
+  Python script that loads ~5,000 players into Redis and benchmarks it against the
+  equivalent PostgreSQL queries; and drafting the NoSQL explanation.
+- **How I checked it:** I ran the Redis walkthrough and confirmed each operation
+  (ZADD, ZINCRBY, ZREVRANGE, ZREVRANK, ZSCORE, HSET) behaved correctly — e.g. a
+  +500 ZINCRBY re-ranked the player as expected (evidence 01); I ran the benchmark
+  and saw Redis beat SQL by ~130× (top 10) and ~206× (a player's rank) on the same
+  5,003-player data (evidence 02); I made sure I can explain in my own words why a
+  sorted set makes ranking near-instant and why we still keep PostgreSQL.
+
 <!-- Add a new dated entry here after each session. -->
