@@ -1,0 +1,27 @@
+============================================================
+SHARDING: ~5,000 players split across 2 shards by hash(id)
+============================================================
+Shard A (port 6390) holds: 2,500 players
+Shard B (port 6391) holds: 2,500 players
+Total across shards:       5,000 players
+-> No single shard holds everything; the load is split.
+
+GLOBAL TOP 5  (scatter: ask both shards; gather: merge + re-sort)
+  1. player_4321  (1999)
+  2. player_321  (1999)
+  3. player_2321  (1999)
+  4. player_642  (1998)
+  5. player_4642  (1998)
+   Note: needed a query to EVERY shard, then a merge. With more
+   shards this gets more expensive — the cost of a global view.
+
+A PLAYER'S GLOBAL RANK  (must count higher scorers on ALL shards)
+  player_2631: score 889, overall rank 2782
+  player_4999: score 1081, overall rank 2303
+   A single shard's ZREVRANK would give only the rank WITHIN that
+   shard — wrong globally — so we count across every shard instead.
+
+TAKEAWAY: sharding scales capacity, but global ranking needs
+scatter/gather. For a leaderboard, prefer sharding by GAME or
+REGION so each shard is a self-contained board (most views are
+per-game/per-region anyway), and keep a global board only if needed.

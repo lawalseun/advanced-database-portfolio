@@ -1,0 +1,23 @@
+########## 1. Start a REPLICA on port 6381 that follows the primary ##########
+# Replica role and link status:
+role:slave
+master_host:127.0.0.1
+master_link_status:up
+
+########## 2. Write a score on the PRIMARY ##########
+# wrote 3 players to the primary.
+# primary top 3: luna_star 1580 mr_rapid 1340 byte_knight 1120 
+
+########## 3. Read the SAME data from the REPLICA (it copied automatically) ##########
+# replica top 3: luna_star 1580 mr_rapid 1340 byte_knight 1120 
+
+########## 4. Update on PRIMARY propagates to REPLICA ##########
+# byte_knight +500 on primary; re-check replica after a moment:
+# replica top 3 now: byte_knight 1620 luna_star 1580 mr_rapid 1340 
+
+########## 5. The REPLICA is READ-ONLY (writes must go to the primary) ##########
+# trying to write to the replica: READONLY You can't write against a read only replica.
+
+# ^ rejected: a replica refuses writes, which keeps the copies consistent.
+
+Done.

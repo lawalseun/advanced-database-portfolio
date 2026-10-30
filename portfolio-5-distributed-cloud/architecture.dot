@@ -1,0 +1,43 @@
+// ArenaPulse — Distributed & Cloud Architecture (Portfolio 5)
+// Render: dot -Tpng architecture.dot -o architecture.png
+digraph ArenaPulse_Cloud {
+    rankdir=TB;
+    bgcolor="white";
+    node [fontname="Helvetica", fontsize=11, style="filled", color="#334155"];
+    edge [fontname="Helvetica", fontsize=9, color="#475569"];
+
+    players [label="Players (mobile app)", shape=box, fillcolor="#e0e7ff"];
+    lb [label="Load balancer", shape=box, fillcolor="#e2e8f0"];
+    app [label="App servers\n(stateless, scale horizontally)", shape=box, fillcolor="#dbeafe"];
+
+    subgraph cluster_redis {
+        label="Serving layer — Redis (fast live leaderboard)";
+        style="rounded,filled"; fillcolor="#fef3c7"; fontname="Helvetica"; fontsize=11;
+        rp [label="Redis PRIMARY\n(accepts writes: ZADD/ZINCRBY)", shape=box, fillcolor="#fde68a"];
+        rr1 [label="Redis replica 1\n(read-only)", shape=box, fillcolor="#fef9c3"];
+        rr2 [label="Redis replica 2\n(read-only)", shape=box, fillcolor="#fef9c3"];
+        shardnote [label="Sharded by game / region\n(each shard = its own board)", shape=note, fillcolor="#fffbeb"];
+        rp -> rr1 [label="replicates"];
+        rp -> rr2 [label="replicates"];
+    }
+
+    subgraph cluster_pg {
+        label="Source of truth — PostgreSQL (durable, rich queries)";
+        style="rounded,filled"; fillcolor="#dcfce7"; fontname="Helvetica"; fontsize=11;
+        pp [label="Postgres PRIMARY\n(writes)", shape=box, fillcolor="#bbf7d0"];
+        pr [label="Postgres read replica\n(reports/analytics)", shape=box, fillcolor="#d9f99d"];
+        pp -> pr [label="streaming replication"];
+    }
+
+    players -> lb -> app;
+    app -> rp [label="write score"];
+    app -> rr1 [label="read top-N / rank"];
+    app -> rr2 [label="read top-N / rank"];
+    app -> pp [label="record score (truth)"];
+    app -> pr [label="analytics reads"];
+    pp -> rp [label="rebuild / backfill", style="dashed"];
+    rp -> shardnote [style="invis"];
+
+    cloudnote [label="Cloud deployment: managed services\nRedis -> Redis Cloud / AWS ElastiCache\nPostgres -> Supabase / AWS RDS / Neon\nApp -> containers behind a load balancer\nMulti-AZ for availability, automated backups", shape=note, fillcolor="#f1f5f9"];
+    app -> cloudnote [style="invis"];
+}

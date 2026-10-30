@@ -63,4 +63,16 @@ reflection in my own words.
   5,003-player data (evidence 02); I made sure I can explain in my own words why a
   sorted set makes ranking near-instant and why we still keep PostgreSQL.
 
+### Session 5 — 2026-10-30 (Portfolio 5: Distributed & Cloud Database)
+- **What AI helped with:** setting up a real Redis primary+replica to demonstrate
+  replication; writing a Python sharding demo across two shards; drawing the
+  distributed/cloud architecture diagram; and drafting the explanation covering
+  replication, sharding, CAP, and cloud deployment.
+- **How I checked it:** I ran the replication demo and confirmed the replica linked
+  to the primary, copied the data, propagated an update, and rejected writes
+  (evidence 01); I ran the sharding demo and saw ~5,000 players split evenly across
+  two shards, with a global top-N and global rank computed by scatter/gather
+  (evidence 02); I reviewed the architecture diagram and made sure I can explain
+  why replicas are read-only and why a leaderboard shards by game/region.
+
 <!-- Add a new dated entry here after each session. -->
