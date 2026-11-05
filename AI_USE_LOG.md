@@ -75,4 +75,13 @@ reflection in my own words.
   (evidence 02); I reviewed the architecture diagram and made sure I can explain
   why replicas are read-only and why a leaderboard shards by game/region.
 
+### Session 6 — 2026-11-04 (Final documentation)
+- **What AI helped with:** structuring the 2–3 page LMS documentation (case study
+  statement, a summary of all five portfolios, GitHub link, AI-use declaration and
+  references), and shaping my own interview answers into the technical reflection.
+- **How I checked it:** I supplied the reflection content myself (why I chose the
+  case study, the hardest part, what surprised me, and what I learned) and reviewed
+  the final document to confirm it accurately reflects the work I did and that the
+  reflection is in my own words.
+
 <!-- Add a new dated entry here after each session. -->
