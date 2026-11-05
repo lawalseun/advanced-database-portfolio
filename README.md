@@ -16,7 +16,7 @@ scales the database behind it.
 | `portfolio-3-transactions-concurrency/` | Transactions & concurrency | ✅ Done |
 | `portfolio-4-nosql/` | NoSQL & advanced data models (Redis) | ✅ Done |
 | `portfolio-5-distributed-cloud/` | Distributed & cloud database | ✅ Done |
-| `AI_USE_LOG.md` | AI-use declaration (required by the brief) | 🔄 ongoing |
+| `AI_USE_LOG.md` | AI-use declaration  | ✅ Done |
 
 Each folder has its own `README.md` explaining what it contains and how to run it.
 
